@@ -1,7 +1,7 @@
 -- Step 1 
 -- Total company revenue/revenue information for each year
 
-CREATE TABLE revenue_per_year AS
+CREATE TABLE total_revenue AS
 SELECT
 	DATE_PART('year', o.order_purchase_timestamp) AS year,
 	SUM(oi.price + oi.freight_value) AS revenue
@@ -11,10 +11,11 @@ WHERE o.order_status = 'delivered'
 GROUP BY 1
 ORDER BY year ASC;
 
--- Step 2
--- Information on the total number of cancel orders for each year
+--Subtask 2
+--Create table with information of total canceled order each year.
+--Make sure filter order status with canceled.
 
-CREATE TABLE cancel_per_year AS
+CREATE TABLE total_canceled AS
 SELECT
 	DATE_PART('year', order_purchase_timestamp) AS year,
 	COUNT(order_id) AS canceled_order
@@ -23,18 +24,18 @@ WHERE order_status = 'canceled'
 GROUP BY 1
 ORDER BY year ASC;
 
--- Step 3
--- Product category that provides the highest total revenue for each year
+--Subtask 3
+--Create table with product category name that give total most revenue each year.
 
-CREATE TABLE most_product_category_by_revenue_per_year AS
+CREATE TABLE top_revenue AS
 SELECT
 	year,
-	most_product_category_by_revenue,
-	product_category_revenue
+	top_revenue,
+	top_product_revenue
 FROM(SELECT
 		DATE_PART('year', o.order_purchase_timestamp) AS year,
-	 	p.product_category_name AS most_product_category_by_revenue,
-	 	SUM(price + freight_value) AS product_category_revenue,
+	 	p.product_category_name AS top_revenue,
+	 	SUM(price + freight_value) AS top_product_revenue,
 	 	RANK() OVER(PARTITION BY DATE_PART('year', o.order_purchase_timestamp)
 				    ORDER BY SUM(oi.price + oi.freight_value) DESC
 					) AS rank
@@ -46,18 +47,18 @@ FROM(SELECT
 	 ) AS subq
 WHERE rank = 1;
 
--- Step 4
--- Product category that has the highest number of cancel orders for each year
+--Subtask 4
+--Create table product category name with total most cancel order each year.
 
-CREATE TABLE most_canceled_product_category_by_per_year AS
+CREATE TABLE top_canceled AS
 SELECT
 	year,
-	most_canceled_product_category,
-	canceled_product_category
+	top_canceled,
+	top_product_canceled
 FROM(SELECT
 		DATE_PART('year', o.order_purchase_timestamp) AS year,
-	 	p.product_category_name AS most_canceled_product_category,
-	 	COUNT(o.order_id) AS canceled_product_category,
+	 	p.product_category_name AS top_canceled,
+	 	COUNT(o.order_id) AS top_product_canceled,
 	 	RANK() OVER(PARTITION BY DATE_PART('year', order_purchase_timestamp)
 				    ORDER BY COUNT(o.order_id) DESC
 					) AS rank
@@ -69,18 +70,18 @@ FROM(SELECT
 	 ) AS subq
 WHERE rank = 1;
 
--- Step 5
--- Combine the information that has been obtained into one table view
+--Subtask 5
+--Group completed information in one display.
 
 SELECT
-	rpy.year,
-	mpcbrpy.most_product_category_by_revenue,
-	mpcbrpy.product_category_revenue,
-	rpy.revenue AS total_revenue,
-	mcpcbpy.most_canceled_product_category,
-	mcpcbpy.canceled_product_category,
-	cpy.canceled_order AS total_canceled_order
-FROM revenue_per_year AS rpy
-JOIN cancel_per_year AS cpy ON cpy.year = rpy.year
-JOIN most_product_category_by_revenue_per_year AS mpcbrpy ON mpcbrpy.year = rpy.year
-JOIN most_canceled_product_category_by_per_year AS mcpcbpy ON mcpcbpy.year = rpy.year;
+	torev.year,
+	tr.top_revenue,
+	tr.top_product_revenue,
+	torev.revenue AS total_revenue,
+	tc.top_canceled,
+	tc.top_product_canceled,
+	tocan.canceled_order AS total_canceled
+FROM total_revenue AS torev
+JOIN total_canceled AS tocan ON tocan.year = torev.year
+JOIN top_revenue AS tr ON tr.year = torev.year
+JOIN top_canceled AS tc ON tc.year = torev.year;
