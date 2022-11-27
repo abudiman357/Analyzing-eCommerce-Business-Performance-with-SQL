@@ -1,5 +1,6 @@
--- Step 1 
--- Total company revenue/revenue information for each year
+--Subtask 1
+--Create table with information of total revenue each year.
+--Make sure filter order status with delivered.
 
 CREATE TABLE total_revenue AS
 SELECT
