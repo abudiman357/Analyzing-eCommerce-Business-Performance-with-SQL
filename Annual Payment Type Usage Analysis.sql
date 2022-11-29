@@ -7,9 +7,9 @@ SELECT
 FROM order_payments
 GROUP BY 1
 ORDER BY 2 DESC;
-
--- Step 2
--- Information on the amount of use of each type of payment for each year
+				   
+--Subtask 2
+--Show information detail of total payment type usage each year
 
 SELECT
 	payment_type,
