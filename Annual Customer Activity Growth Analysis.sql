@@ -1,89 +1,90 @@
-with
--- Step 1
--- Average number of monthly active users for each year
-mau_of_year as (
-select
+--Subtask 1
+--Average number of monthly active users for each year
+
+WITH
+mau_of_year AS (
+SELECT
 	year,
-	round(avg(mau), 2) as avg_mau
-from (
-	select
-		date_part('year', o.order_purchase_timestamp) as year,
-		date_part('month', o.order_purchase_timestamp) as month,
-		count(distinct c.customer_unique_id) as mau
-	from orders o
-	join customers c
-	    on o.customer_id = c.customer_id
-	group by 1, 2
+	round(AVG(mau), 2) AS avg_mau
+FROM (
+	SELECT
+		date_part('year', o.order_purchase_timestamp) AS year,
+		date_part('month', o.order_purchase_timestamp) AS month,
+		COUNT(DISTINCT c.customer_unique_id) AS mau
+	FROM orders o
+	JOIN customers c
+	    ON o.customer_id = c.customer_id
+	GROUP BY 1, 2
 ) subq
-group by 1),
+GROUP BY 1),
 
--- Step 2
--- number of new customers every year
+--Subtask 2
+--number of new customers every year
 
-newcust_of_year as (
-select
-	date_part('year', first_order) as year,
-	count(customer_unique_id) as new_customers
-from
-	(select
+newcust_of_year AS (
+SELECT
+	date_part('year', first_order) AS year,
+	COUNT(customer_unique_id) AS new_customers
+FROM
+	(SELECT
 		c.customer_unique_id,
-		min(o.order_purchase_timestamp) as first_order
-	from orders as o
-	join customers as c
-		on c.customer_id = o.customer_id
-	group by 1) as subq
-group by 1
-order by 1 asc),
+		MIN(o.order_purchase_timestamp) AS first_order
+	FROM orders AS o
+	JOIN customers AS c
+		ON c.customer_id = o.customer_id
+	GROUP BY 1) AS subq
+GROUP BY 1
+ORDER BY 1 ASC),
 
--- Step 3
--- number of customers who make purchases more than once (repeat orders) in each year
+--Subtask 3
+--number of customers who make purchases more than once (repeat orders) in each year
 
-repeat_of_year as (
-select
+repeat_of_year AS (
+SELECT
     year,
-    count(distinct customer) as repeat_customer
-from(
-    select
-        date_part('year', o.order_purchase_timestamp) as year,
-        c.customer_unique_id as customer,
-        count(order_id) as total_transaction
-    from customers c
-    join orders o
-        on c.customer_id=o.customer_id
-    group by 1,2
-    having count(order_id) > 1
+    COUNT(DISTINCT customer) AS repeat_customer
+FROM(
+    SELECT
+        date_part('year', o.order_purchase_timestamp) AS year,
+        c.customer_unique_id AS customer,
+        COUNT(order_id) AS total_transaction
+    FROM customers c
+    JOIN orders o
+        ON c.customer_id=o.customer_id
+    GROUP BY 1,2
+    HAVING COUNT(order_id) > 1
 )subq
-group by 1),
+GROUP BY 1),
 
--- Step 4
--- average number of orders made by customers for each year
+--Subtask 4
+--average number of orders made by customers for each year
 
-avg_freq_of_year as (
-select
+avg_freq_of_year AS (
+SELECT
     year,
-    round(avg(total_transaction),4) as avg_transaction
-from(
-    select
-        date_part('year', o.order_purchase_timestamp) as year,
-		c.customer_unique_id as customer,
-        count(order_id) as total_transaction
-    from customers c
-    join orders o
-        on c.customer_id=o.customer_id
-    group by 1,2
+    round(AVG(total_transaction),4) AS avg_transaction
+FROM(
+    SELECT
+        date_part('year', o.order_purchase_timestamp) AS year,
+		c.customer_unique_id AS customer,
+        COUNT(order_id) AS total_transaction
+    FROM customers c
+    JOIN orders o
+        ON c.customer_id=o.customer_id
+    GROUP BY 1,2
 )subq
-group by 1)
+GROUP BY 1)
 
--- Step 5
--- Merge the tables above
+--Subtask 5
+--Merge the tables above
 
-select 
+SELECT 
 	moy.year, 
-	moy.avg_mau, 
+	moy.avg_mau,
 	noy.new_customers,
 	roy.repeat_customer, 
 	afoy.avg_transaction
-from mau_of_year as moy 
-join newcust_of_year as noy on moy.year = noy.year
-join repeat_of_year as roy on roy.year = moy.year
-join avg_freq_of_year as afoy on afoy.year = moy.year;
+FROM mau_of_year AS moy 
+JOIN newcust_of_year AS noy ON moy.year = noy.year
+JOIN repeat_of_year AS roy ON roy.year = moy.year
+JOIN avg_freq_of_year AS afoy ON afoy.year = moy.year;
