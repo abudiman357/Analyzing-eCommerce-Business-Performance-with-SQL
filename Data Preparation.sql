@@ -1,108 +1,98 @@
--- Step 1
--- Create table
+--Subtask 1
+--Create table
 
-create table customers (
-	customer_id varchar,
-	customer_unique_id varchar,
-	customer_zip_code_prefix int,
-	customer_city varchar,
-	customer_state varchar
+CREATE TABLE customers (
+	customer_id VARCHAR,
+	customer_unique_id VARCHAR,
+	customer_zip_code_prefix INT,
+	customer_city VARCHAR,
+	customer_state VARCHAR
+);
+CREATE TABLE geolocation (
+	geo_zip_code_prefix VARCHAR,
+	geo_lat VARCHAR,
+	geo_lng VARCHAR,
+	geo_city VARCHAR,
+	geo_state VARCHAR
+);
+CREATE TABLE order_items (
+	order_id VARCHAR,
+	order_item_id INT,
+	product_id VARCHAR,
+	seller_id VARCHAR,
+	shipping_limit_date TIMESTAMP,
+	price FLOAT,
+	freight_value FLOAT
+);
+CREATE TABLE order_payments (
+	order_id VARCHAR,
+	payment_sequential INT,
+	payment_type VARCHAR,
+	payment_installment INT,
+	payment_value FLOAT
+);
+CREATE TABLE order_reviews (
+	review_id VARCHAR,
+	order_id VARCHAR,
+	review_score INT, 
+	review_comment_title VARCHAR,
+	review_comment_message TEXT,
+	review_creation_date TIMESTAMP,
+	review_answer TIMESTAMP
+);
+CREATE TABLE orders (
+	order_id VARCHAR,
+	customer_id VARCHAR,
+	order_status VARCHAR,
+	order_purchase_timestamp TIMESTAMP,
+	order_approved_at TIMESTAMP,
+	order_delivered_carrier_date TIMESTAMP,
+	order_delivered_customer_date TIMESTAMP,
+	order_estimated_delivered_date TIMESTAMP
+);
+CREATE TABLE products (
+    num INT,
+	product_id VARCHAR,
+	product_category_name VARCHAR,
+	product_name_length NUMERIC,
+	product_description_length NUMERIC,
+	product_photos_qty NUMERIC,
+	product_weight_g NUMERIC,
+	product_length_cm NUMERIC,
+	product_height_cm NUMERIC,
+	product_width_cm NUMERIC
+);
+CREATE TABLE sellers (
+	seller_id VARCHAR,
+	seller_zip_code_prefix INT,
+	seller_city VARCHAR,
+	seller_state VARCHAR
 );
 
-create table geolocation (
-	geo_zip_code_prefix varchar,
-	geo_lat varchar,
-	geo_lng varchar,
-	geo_city varchar,
-	geo_state varchar
-);
+--Subtask 2
+--Import csv dataset to the table
 
-create table order_items (
-	order_id varchar,
-	order_item_id int,
-	product_id varchar,
-	seller_id varchar,
-	shipping_limit_date timestamp,
-	price float,
-	freight_value float
-);
-
-create table order_payments (
-	order_id varchar,
-	payment_sequential int,
-	payment_type varchar,
-	payment_installment int,
-	payment_value float
-);
-
-
-create table order_reviews (
-	review_id varchar,
-	order_id varchar,
-	review_score int, 
-	review_comment_title varchar,
-	review_comment_message text,
-	review_creation_date timestamp,
-	review_answer timestamp
-);
-
-create table orders (
-	order_id varchar,
-	customer_id varchar,
-	order_status varchar,
-	order_purchase_timestamp timestamp,
-	order_approved_at timestamp,
-	order_delivered_carrier_date timestamp,
-	order_delivered_customer_date timestamp,
-	order_estimated_delivered_date timestamp
-);
-
-create table products (
-    num int,
-	product_id varchar,
-	product_category_name varchar,
-	product_name_length numeric,
-	product_description_length numeric,
-	product_photos_qty numeric,
-	product_weight_g numeric,
-	product_length_cm numeric,
-	product_height_cm numeric,
-	product_width_cm numeric
-);
-
-create table sellers (
-	seller_id varchar,
-	seller_zip_code_prefix int,
-	seller_city varchar,
-	seller_state varchar
-);
-
--- STEP 2
--- Import csv dataset to the table.
-
-copy customers(
+COPY customers(
 	customer_id,
 	customer_unique_id,
 	customer_zip_code_prefix,
 	customer_city,
 	customer_state
 )
-from 'D:\Mini Project\1\customers_dataset.csv'
-delimiter ','
-csv header;
-
-copy geolocation(
+FROM 'D:\Mini Project\1\Dataset\customers_dataset.csv'
+DELIMITER ','
+CSV HEADER;
+COPY geolocation(
 	geo_zip_code_prefix,
 	geo_lat,
 	geo_lng,
 	geo_city,
 	geo_state
 )
-from 'D:\Mini Project\1\geolocation_dataset.csv'
-delimiter ','
-csv header;
-
-copy order_items(
+FROM 'D:\Mini Project\1\Dataset\geolocation_dataset.csv'
+DELIMITER ','
+CSV HEADER;
+COPY order_items(
 	order_id,
 	order_item_id,
 	product_id,
@@ -111,22 +101,20 @@ copy order_items(
 	price,
 	freight_value
 )
-from 'D:\Mini Project\1\order_items_dataset.csv'
-delimiter ','
-csv header;
-
-copy order_payments(
+FROM 'D:\Mini Project\1\Dataset\order_items_dataset.csv'
+DELIMITER ','
+CSV HEADER;
+COPY order_payments(
 	order_id,
 	payment_sequential,
 	payment_type,
 	payment_installment,
 	payment_value
 )
-from 'D:\Mini Project\1\order_payments_dataset.csv'
-delimiter ','
-csv header;
-
-copy order_reviews(
+FROM 'D:\Mini Project\1\Dataset\order_payments_dataset.csv'
+DELIMITER ','
+CSV HEADER;
+COPY order_reviews(
 	review_id,
 	order_id,
 	review_score,
@@ -135,11 +123,10 @@ copy order_reviews(
 	review_creation_date,
 	review_answer
 )
-from 'D:\Mini Project\1\order_reviews_dataset.csv'
-delimiter ','
-csv header;
-
-copy orders(
+FROM 'D:\Mini Project\1\Dataset\order_reviews_dataset.csv'
+DELIMITER ','
+CSV HEADER;
+COPY orders(
 	order_id,
 	customer_id,
 	order_status,
@@ -149,11 +136,10 @@ copy orders(
 	order_delivered_customer_date,
 	order_estimated_delivered_date
 )
-from 'D:\Mini Project\1\orders_dataset.csv'
-delimiter ','
-csv header;
-
-copy products(
+FROM 'D:\Mini Project\1\Dataset\orders_dataset.csv'
+DELIMITER ','
+CSV HEADER;
+COPY products(
     num,
     product_id,
 	product_category_name,
@@ -165,29 +151,27 @@ copy products(
 	product_height_cm,
 	product_width_cm
 )
-from 'D:\Mini Project\1\product_dataset.csv'
-delimiter ','
-csv header;
-
-copy sellers(
+FROM 'D:\Mini Project\1\Dataset\product_dataset.csv'
+DELIMITER ','
+CSV HEADER;
+COPY sellers(
 	seller_id,
 	seller_zip_code_prefix,
 	seller_city,
 	seller_state
 )
-from 'D:\Mini Project\1\sellers_dataset.csv'
-delimiter ','
-csv header;
+FROM 'D:\Mini Project\1\Dataset\sellers_dataset.csv'
+DELIMITER ','
+CSV HEADER;
 
--- Step 3
--- Determine primary key and foreign key for relation in each data and create ERD
+--Subtask 3
+--Determine primary key and foreign key for relation in each data and create ERD
 
 -- Primary Key
-alter table customers add constraint pk_cust primary key (customer_id);
-alter table orders add constraint pk_orders primary key (order_id);
-alter table products add constraint pk_products primary key (product_id);
-alter table sellers add constraint pk_seller primary key (seller_id);
-
+ALTER TABLE customers ADD CONSTRAINT pk_cust PRIMARY KEY (customer_id);
+ALTER TABLE orders ADD CONSTRAINT pk_orders PRIMARY KEY (order_id);
+ALTER TABLE products ADD CONSTRAINT pk_products PRIMARY KEY (product_id);
+ALTER TABLE sellers ADD CONSTRAINT pk_seller PRIMARY KEY (seller_id);
 -- Foreign Key
 ALTER TABLE order_items ADD FOREIGN KEY(order_id) REFERENCES orders;
 ALTER TABLE order_items ADD FOREIGN KEY(product_id) REFERENCES products;
