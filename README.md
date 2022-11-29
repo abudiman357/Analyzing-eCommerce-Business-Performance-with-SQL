@@ -4,7 +4,7 @@ This is a project challenge provided by expert tutors from [Rakamin Academy](htt
 ## Environment
 **Dataset**: [Dataset](https://drive.google.com/drive/folders/1G4w0nMajiRqeWGRlwGgzOZ1LcpOadiRZ?usp=sharing)<br>
 **Programming Language**: SQL<br>
-**Tools**: PostgreSQL, Excel<br>
+**Tools**: PostgreSQL, Excel, Tableau<br>
 
    
 
